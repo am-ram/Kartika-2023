@@ -4,4 +4,5 @@ matplotlib
 seaborn
 plotly
 streamlit
-streamlit_gsheets
+st-gsheets-connection
+gsheetsdb
