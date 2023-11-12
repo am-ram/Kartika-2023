@@ -1,0 +1,181 @@
+import streamlit as st
+from streamlit_gsheets import GSheetsConnection
+from streamlit_extras.card import card
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.express as px
+st.set_page_config(layout="wide")
+
+def main():
+    st.title("Kartika Damodara Month 2023")
+    vv_url = "https://docs.google.com/spreadsheets/d/1DEeRHNvakG8ZxjIfBdIvJOEUkJgryrqkOxeFBTLPnEM/edit#gid=0"
+    kv_url = "https://docs.google.com/spreadsheets/d/1DEeRHNvakG8ZxjIfBdIvJOEUkJgryrqkOxeFBTLPnEM/edit#gid=1318636251"
+    vg_url = "https://docs.google.com/spreadsheets/d/1DEeRHNvakG8ZxjIfBdIvJOEUkJgryrqkOxeFBTLPnEM/edit#gid=1647846290"
+    rgnc_url = "https://docs.google.com/spreadsheets/d/1DEeRHNvakG8ZxjIfBdIvJOEUkJgryrqkOxeFBTLPnEM/edit#gid=272388271"
+    conn = st.connection("gsheets", type=GSheetsConnection)
+    #--------------- 1 Loading VV
+    # vv = conn.read(worksheet="Vamsivat",usecols=list(range(13)))
+    vv = conn.read(spreadsheet=vv_url,usecols=list(range(13)))
+    new_cols=['Date','Sevaks','Lamps','Place','HousePrograms', 'Contacts', 'Books', 'Temples', 'Schools', 'Offices', 'Shops', 'Hospitals', 'Others']
+    vv=vv.rename(columns=dict(zip(vv.columns,new_cols)))
+    vv=vv.drop(0)
+    vv=vv.fillna(0)
+    vv.drop(vv[vv['Date'] == 0].index, inplace=True)
+    #--------------- 2 Loading KV
+    # kv = conn.read(worksheet="Kalpavriksha",usecols=list(range(14)))
+    kv = conn.read(spreadsheet=kv_url,usecols=list(range(14)))
+    new_cols=['Date','Sevaks','Lamps','Place','HousePrograms', 'Contacts', 'Books', 'Temples', 'Schools', 'Offices', 'Shops', 'Hospitals', 'Others','Apartments']
+    kv=kv.rename(columns=dict(zip(kv.columns,new_cols)))
+    kv=kv.drop(0)
+    kv=kv.fillna(0)
+    kv.drop(kv[kv['Date'] == 0].index, inplace=True)
+    #--------------- 3 Loading VG
+    # vg = conn.read(worksheet="Vrajagopis",usecols=list(range(13)))
+    vg = conn.read(spreadsheet=vg_url,usecols=list(range(13)))
+    new_cols=['Date','Sevaks','Lamps','Place','HousePrograms', 'Contacts', 'Books', 'Temples', 'Schools', 'Offices', 'Shops', 'Hospitals', 'Others']
+    vg=vg.rename(columns=dict(zip(vg.columns,new_cols)))
+    vg=vg.drop(0)
+    vg=vg.fillna(0)
+    vg.drop(vg[vg['Date'] == 0].index, inplace=True)
+    #--------------- 4 Loading RGNC
+    # rgnc = conn.read(worksheet="RGNC",usecols=list(range(14)))
+    rgnc = conn.read(spreadsheet=rgnc_url,usecols=list(range(14)))
+    rgnc=rgnc.fillna(0)
+    rgnc=rgnc.drop(rgnc.columns[:3],axis=1)
+    new_cols = ['Sector','Lamps','HousePrograms','Contacts','Books','Temples',"Schools",'Offices','Shops','Hospitals','Others']
+    rgnc = rgnc.drop(0)
+    rgnc=rgnc.rename(columns=dict(zip(rgnc.columns,new_cols)))
+    rgnc = rgnc.drop([4,5,6])
+
+    #-------------- 5 Dropdown to display excel data from sidebar 
+    selected_sheet = st.sidebar.selectbox(
+    "Click to view Excel Sheets",
+    ("RGNC", "Vamsivat", "Kalpavriksha",'Vrajagopis'),
+    index=None,
+    placeholder="Select Sheet...",
+    )
+    if selected_sheet=='Vamsivat':
+        st.header("Vamsivat")
+        st.dataframe(vv)
+    elif selected_sheet=='Kalpavriksha':
+        st.header("Kalpavriksha")
+        st.dataframe(kv)
+    elif selected_sheet=='Vrajagopis':
+        st.header("Vrajagopis")
+        st.dataframe(vg)
+    elif selected_sheet=='RGNC':
+        st.header("RGNC")
+        st.dataframe(rgnc)
+
+    #----------------- 6 Overall Charts
+    rgnc['Lamps'] = rgnc.Lamps.astype('int')
+    #progress bar and pie
+    current_completion = rgnc.Lamps.sum()
+    total_target = 25000
+    completion_percentage = (current_completion / total_target) * 100
+    col1, col2, col3 = st.columns(3)
+    houses_covered=rgnc.HousePrograms.sum()
+    unq_places = pd.concat([vv.Place,kv.Place,vg.Place])
+    with col1:
+        c1=card(
+            title=f"{current_completion}",
+            text="Unique Souls Offered",
+            image="https://i.pinimg.com/originals/5e/c1/2e/5ec12ebb5ab4b57812cfdf2cb31fd9e7.jpg",
+            on_click=lambda: print("Clicked!")
+        )
+    with col2:
+        c2=card(
+            title=f"{houses_covered}",
+            text="Unique Houses Covered  ",
+            image="https://i.pinimg.com/originals/5e/c1/2e/5ec12ebb5ab4b57812cfdf2cb31fd9e7.jpg",
+            on_click=lambda: print("Clicked!")
+        )
+    with col3:
+        c3=card(
+            title=f"{len(unq_places)}",
+            text="Unique Locations Covered",
+            image="https://i.pinimg.com/originals/5e/c1/2e/5ec12ebb5ab4b57812cfdf2cb31fd9e7.jpg",
+            on_click=lambda: print("Clicked!")
+        )
+    st.divider()
+
+    col1, col2 = st.columns(2)
+    st.progress(completion_percentage / 100)  # st.progress expects a value between 0 and 1
+    st.header(f"Completion: {completion_percentage:.2f}%")
+    with col1:
+        st.header("Locations Covered")
+        total_homes=pd.concat([vv.iloc[:,4:],kv.iloc[:,4:],vg.iloc[:,4:]])
+        temp=total_homes.sum()
+        top=temp.nlargest(5)
+        fig = px.pie(
+                values=top.values, names=top.index,hole=0.6,title='Locations Visited',color_discrete_sequence=['skyBlue','mediumPurple','cornflowerblue','cyan','dodgerblue'] 
+            )
+        fig.update_layout(showlegend=True)
+        st.plotly_chart(fig)
+    with col2:
+        st.header("How much have we completed?")
+        fig = px.pie(
+            values=[current_completion, total_target - current_completion], names=['Completed', 'Remaining'],hole=0.6,title='Completion Progress'
+        )
+        fig.update_layout(showlegend=False)
+        st.plotly_chart(fig)
+
+    st.divider()
+
+    col1, col2 = st.columns(2)
+    with col1:
+    # timeline date vs lamps
+        vv_date_lamps = vv[['Date', 'Lamps']] ; vv_date_lamps['Date'] = pd.to_datetime(vv_date_lamps['Date'])
+        kv_date_lamps = kv[['Date', 'Lamps']] ; kv_date_lamps['Date'] = pd.to_datetime(kv_date_lamps['Date'])
+        vg_date_lamps = vg[['Date', 'Lamps']] ; vg_date_lamps['Date'] = pd.to_datetime(vg_date_lamps['Date'])
+        combined_dates_lamps = pd.concat([vv_date_lamps, kv_date_lamps, vg_date_lamps], ignore_index=True)
+        combined_dates_lamps['Date'] = combined_dates_lamps['Date'].dt.strftime('%d-%m-%y')
+        overall_date_lamps = combined_dates_lamps.groupby('Date').sum().reset_index()
+        overall_date_lamps['Date'] = pd.to_datetime(overall_date_lamps['Date'])
+        overall_date_lamps = overall_date_lamps.sort_values(by='Date', ascending=True)
+        xval = overall_date_lamps['Date'].dt.strftime('%d-%m-%Y')
+        fig = px.line(overall_date_lamps, x=xval, y='Lamps', labels={'Lamps': 'Number of Lamps'}, title='Timeline of Lamps Offered')
+        fig.update_traces(mode='markers+lines', marker=dict(size=10))  # Add markers (bubbles) on top
+        fig.update_xaxes(type='category', tickformat='%d-%m-%Y', tickangle=45)
+        st.plotly_chart(fig)
+    with col2:
+    # sector vs lamps
+        fig = px.bar(rgnc, x='Sector', y='Lamps', labels={'Lamps': 'Number of Lamps'}, title='Lamps per Sector')
+        fig.update_layout(
+            xaxis_title='Sector',
+            yaxis_title='Number of Lamps',
+            barmode='group',  
+            width=600,  # Set the width of the chart
+            margin=dict(l=50, r=50, t=30, b=30), 
+        )
+        colors = [['skyBlue','mediumPurple','cornflowerblue']] 
+        for i, bar in enumerate(fig.data):
+            bar.marker.color = colors[i]
+        bar_width = 0.4
+        for bar in fig.data:
+            bar.update(width=bar_width)
+            bar.marker.line.color = 'black'  
+            bar.marker.line.width = 1.5
+        st.plotly_chart(fig)
+
+
+    st.divider()
+
+    vv_individual = vv.assign(Sevaks_Names=vv['Sevaks'].str.split(',')).explode('Sevaks_Names')
+    temp = vv_individual.groupby('Sevaks_Names')['Lamps'].sum().reset_index()
+    vv_leaderboard = temp.sort_values(by='Lamps', ascending=False)
+
+    kv_individual = kv.assign(Sevaks_Names=kv['Sevaks'].str.split(',')).explode('Sevaks_Names')
+    temp1 = kv_individual.groupby('Sevaks_Names')['Lamps'].sum().reset_index()
+    kv_leaderboard = temp1.sort_values(by='Lamps', ascending=False)
+
+    vg_individual = vg.assign(Sevaks_Names=vg['Sevaks'].str.split(',')).explode('Sevaks_Names')
+    temp2 = vg_individual.groupby('Sevaks_Names')['Lamps'].sum().reset_index()
+    vg_leaderboard = temp2.sort_values(by='Lamps', ascending=False)
+
+    st.write(vv_leaderboard,kv_leaderboard,vg_leaderboard)
+
+if __name__ == "__main__":
+    main()
