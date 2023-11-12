@@ -6,3 +6,4 @@ plotly
 streamlit
 st-gsheets-connection
 gsheetsdb
+streamlit-extras
