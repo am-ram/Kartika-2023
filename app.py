@@ -6,7 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
-st.set_page_config(layout="wide")
+st.set_page_config(layout="wide",page_title='RGNC Kartika')
+
 
 def main():
     st.title("Kartika Damodara Month 2023")
@@ -14,6 +15,10 @@ def main():
     <style>
     button[data-baseweb="tab"] > div[data-testid="stMarkdownContainer"] > p {
     font-size: 24px;
+    
+    }
+    button[data-baseweb="tab"] {
+        margin-right: 30%; /* Adjust the value to control the space between tabs */
     }
     </style>
     """
@@ -130,7 +135,7 @@ def main():
             fig = px.pie(
                 values=[current_completion, total_target - current_completion], names=['Completed', 'Remaining'],hole=0.6,title='Completion Progress'
             )
-            fig.update_layout(showlegend=False)
+            fig.update_layout(showlegend=True)
             st.plotly_chart(fig)
 
         st.divider()
@@ -138,42 +143,53 @@ def main():
         col1, col2 = st.columns(2)
         with col1:
         # timeline date vs lamps
-            # vv_date_lamps = vv[['Date', 'Lamps']] ; vv_date_lamps['Date'] = pd.to_datetime(vv_date_lamps['Date'])
-            # kv_date_lamps = kv[['Date', 'Lamps']] ; kv_date_lamps['Date'] = pd.to_datetime(kv_date_lamps['Date'])
-            # vg_date_lamps = vg[['Date', 'Lamps']] ; vg_date_lamps['Date'] = pd.to_datetime(vg_date_lamps['Date'])
-            # combined_dates_lamps = pd.concat([vv_date_lamps, kv_date_lamps, vg_date_lamps], ignore_index=True)
-            # combined_dates_lamps['Date'] = combined_dates_lamps['Date'].dt.strftime('%d-%m-%y')
-            # overall_date_lamps = combined_dates_lamps.groupby('Date').sum().reset_index()
-            # overall_date_lamps['Date'] = pd.to_datetime(overall_date_lamps['Date'])
-            # overall_date_lamps = overall_date_lamps.sort_values(by='Date', ascending=True)
-            # xval = overall_date_lamps['Date'].dt.strftime('%d-%m-%Y')
-            # fig = px.line(overall_date_lamps, x=xval, y='Lamps', labels={'Lamps': 'Number of Lamps'}, title='Timeline of Lamps Offered')
-            # fig.update_traces(mode='markers+lines', marker=dict(size=10))  # Add markers (bubbles) on top
-            # fig.update_xaxes(type='category', tickformat='%d-%m-%Y', tickangle=45)
-            # st.plotly_chart(fig)
             vv_date_lamps = vv[['Date', 'Lamps']] ; vv_date_lamps['Date'] = pd.to_datetime(vv_date_lamps['Date'])
             kv_date_lamps = kv[['Date', 'Lamps']] ; kv_date_lamps['Date'] = pd.to_datetime(kv_date_lamps['Date'])
             vg_date_lamps = vg[['Date', 'Lamps']] ; vg_date_lamps['Date'] = pd.to_datetime(vg_date_lamps['Date'])
-
-            vv_date_lamps.Lamps = vv_date_lamps.Lamps.astype('int')
-            kv_date_lamps.Lamps = kv_date_lamps.Lamps.astype('int')
-            vg_date_lamps.Lamps = vg_date_lamps.Lamps.astype('int')
-
             combined_dates_lamps = pd.concat([vv_date_lamps, kv_date_lamps, vg_date_lamps], ignore_index=True)
+            combined_dates_lamps['Date'] = combined_dates_lamps['Date'].dt.strftime('%d-%m-%y')
+            combined_dates_lamps['Lamps'] = combined_dates_lamps.Lamps.astype('int')
             overall_date_lamps = combined_dates_lamps.groupby('Date').sum().reset_index()
             overall_date_lamps['Date'] = pd.to_datetime(overall_date_lamps['Date'])
             overall_date_lamps = overall_date_lamps.sort_values(by='Date', ascending=True)
+            # print(overall_date_lamps,overall_date_lamps.dtypes)
             xval = overall_date_lamps['Date'].dt.strftime('%d-%m-%Y')
+            print(xval.dtype)
             fig = px.line(overall_date_lamps, x=xval, y='Lamps', labels={'Lamps': 'Number of Lamps'}, title='Timeline of Lamps Offered')
             fig.update_traces(mode='markers+lines', marker=dict(size=10))  # Add markers (bubbles) on top
-            fig.update_xaxes(type='category', tickformat='%d-%m-%Y', tickangle=45, title_text='Date', tickfont=dict(size=16))  # Set x-axis label to 'Date' and adjust tick font size
-            fig.update_yaxes(tickfont=dict(size=16))  # Adjust y-axis tick font size
+            fig.update_xaxes(type='category', tickformat='%d-%m-%Y', tickangle=45,title_text='Date')
+            fig.update_yaxes(tickfont=dict(size=16))
             fig.update_layout(
                 title=dict(text='Timeline of Lamps Offered', font=dict(size=24)),  # Increase title font size to 24
                 xaxis=dict(title=dict(font=dict(size=18))), yaxis=dict(title=dict(font=dict(size=18)))  # Adjust label font size
             )
             st.plotly_chart(fig)
+            # vv_date_lamps = vv[['Date', 'Lamps']] ; vv_date_lamps['Date'] = pd.to_datetime(vv_date_lamps['Date'])
+            # kv_date_lamps = kv[['Date', 'Lamps']] ; kv_date_lamps['Date'] = pd.to_datetime(kv_date_lamps['Date'])
+            # vg_date_lamps = vg[['Date', 'Lamps']] ; vg_date_lamps['Date'] = pd.to_datetime(vg_date_lamps['Date'])
+
+            # vv_date_lamps.Lamps = vv_date_lamps.Lamps.astype('int')
+            # kv_date_lamps.Lamps = kv_date_lamps.Lamps.astype('int')
+            # vg_date_lamps.Lamps = vg_date_lamps.Lamps.astype('int')
+
+            # combined_dates_lamps = pd.concat([vv_date_lamps, kv_date_lamps, vg_date_lamps], ignore_index=True)
+            # overall_date_lamps = combined_dates_lamps.groupby('Date').sum().reset_index()
+            # overall_date_lamps['Date'] = pd.to_datetime(overall_date_lamps['Date'])
+            # overall_date_lamps = overall_date_lamps.sort_values(by='Date', ascending=True)
+            # # print(overall_date_lamps.Date)
             
+            # xval = overall_date_lamps['Date'].dt.strftime('%d-%m-%Y')
+            # xval = pd.to_datetime(xval, format='%d-%m-%Y').dt.strftime('%d-%m-%Y')
+            # fig = px.line(overall_date_lamps, x=overall_date_lamps['Date'], y='Lamps', labels={'Lamps': 'Number of Lamps'}, title='Timeline of Lamps Offered')
+            # fig.update_traces(mode='markers+lines', marker=dict(size=10))  # Add markers (bubbles) on top
+            # fig.update_xaxes(type='category', tickformat='%d-%m-%Y', tickangle=45, title_text='Date', tickfont=dict(size=16))  # Set x-axis label to 'Date' and adjust tick font size
+            # fig.update_yaxes(tickfont=dict(size=16))  # Adjust y-axis tick font size
+            # fig.update_layout(
+            #     title=dict(text='Timeline of Lamps Offered', font=dict(size=24)),  # Increase title font size to 24
+            #     xaxis=dict(title=dict(font=dict(size=18))), yaxis=dict(title=dict(font=dict(size=18)))  # Adjust label font size
+            # )
+            # st.plotly_chart(fig)
+
         with col2:
         # sector vs lamps
             fig = px.bar(rgnc, x='Sector', y='Lamps', labels={'Lamps': 'Number of Lamps'}, title='Lamps per Sector')
