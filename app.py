@@ -7,7 +7,18 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
 st.set_page_config(layout="wide",page_title='RGNC Kartika')
-
+st.markdown(
+    """
+    <style>
+    .css-1jc7ptx, .e1ewe7hr3, .viewerBadge_container__1QSob,
+    .styles_viewerBadge__1yB5_, .viewerBadge_link__1S137,
+    .viewerBadge_text__1JaDK {
+        display: none;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 def main():
     st.title("Kartika Damodara Month 2023")
@@ -222,7 +233,12 @@ def main():
 
 
         st.divider()
-
+        footer = """<div style="text-align: center;">
+                <a href="https://visitorbadge.io/status?path=https%3A%2F%2Frgnc-kartika-2023.streamlit.app%2F">
+                    <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Frgnc-kartika-2023.streamlit.app%2F&label=Thankyouforvisiting&labelColor=%232ccce4&countColor=%23263759&style=flat-square" />
+                </a>
+            </div>"""
+        st.markdown(footer, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
