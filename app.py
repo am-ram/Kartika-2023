@@ -148,7 +148,7 @@ def main():
             )
             fig.update_layout(showlegend=True)
             st.plotly_chart(fig)
-         with col2:
+        with col2:
             st.header("How much have we completed?")
             fig = px.pie(
                 values=[current_completion, total_target - current_completion], 
