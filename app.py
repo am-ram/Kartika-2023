@@ -133,7 +133,7 @@ def main():
         # st.progress(completion_percentage / 100)  # st.progress expects a value between 0 and 1
         st.progress(progress_value)
         st.header(f"Completion: {completion_percentage:.2f}%")
-       with col1:
+        with col1:
             st.header("Locations Covered")
             total_homes = pd.concat([vv.iloc[:, 4:], kv.iloc[:, 4:], vg.iloc[:, 4:]])
             temp = total_homes.sum().apply(pd.to_numeric, errors='coerce')
@@ -148,7 +148,7 @@ def main():
             )
             fig.update_layout(showlegend=True)
             st.plotly_chart(fig)
-        with col2:
+         with col2:
             st.header("How much have we completed?")
             fig = px.pie(
                 values=[current_completion, total_target - current_completion], 
