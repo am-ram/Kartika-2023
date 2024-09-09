@@ -166,13 +166,16 @@ def main():
         with col1:
             # timeline date vs lamps
             vv_date_lamps = vv[['Date', 'Lamps']].copy()
-            vv_date_lamps.loc[:, 'Date'] = pd.to_datetime(vv_date_lamps['Date'], format='%d-%m-%y')
+            # vv_date_lamps.loc[:, 'Date'] = pd.to_datetime(vv_date_lamps['Date'], format='%d-%m-%y')
+            vv_date_lamps.loc[:, 'Date'] = pd.to_datetime(vv_date_lamps['Date'], format='mixed')
         
             kv_date_lamps = kv[['Date', 'Lamps']].copy()
-            kv_date_lamps.loc[:, 'Date'] = pd.to_datetime(kv_date_lamps['Date'], format='%d-%m-%y')
+            # kv_date_lamps.loc[:, 'Date'] = pd.to_datetime(kv_date_lamps['Date'], format='%d-%m-%y')
+            kv_date_lamps.loc[:, 'Date'] = pd.to_datetime(kv_date_lamps['Date'], format='mixed')
         
             vg_date_lamps = vg[['Date', 'Lamps']].copy()
-            vg_date_lamps.loc[:, 'Date'] = pd.to_datetime(vg_date_lamps['Date'], format='%d-%m-%y')
+            # vg_date_lamps.loc[:, 'Date'] = pd.to_datetime(vg_date_lamps['Date'], format='%d-%m-%y')
+            vg_date_lamps.loc[:, 'Date'] = pd.to_datetime(vg_date_lamps['Date'], format='mixed')
         
             # Combine dataframes
             combined_dates_lamps = pd.concat([vv_date_lamps, kv_date_lamps, vg_date_lamps], ignore_index=True)
