@@ -130,7 +130,6 @@ def main():
 
         col1, col2 = st.columns(2)
         progress_value = min(completion_percentage / 100, 1.0)
-        # st.progress(completion_percentage / 100)  # st.progress expects a value between 0 and 1
         st.progress(progress_value)
         st.header(f"Completion: {completion_percentage:.2f}%")
         with col1:
@@ -148,6 +147,7 @@ def main():
             )
             fig.update_layout(showlegend=True)
             st.plotly_chart(fig)
+
         with col2:
             st.header("How much have we completed?")
             fig = px.pie(
@@ -246,7 +246,7 @@ def main():
         st.divider()
         footer = """<div style="text-align: center;">
                 <a href="https://visitorbadge.io/status?path=https%3A%2F%2Frgnc-kartika-2023.streamlit.app%2F">
-                    <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Frgnc-kartika-2023.streamlit.app%2F&label=Thankyouforvisiting&labelColor=%232ccce4&countColor=%23263759&style=flat-square" />
+                    <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Frgnc-kartika-2023.streamlit.app%2F&label=ThankYouforVisiting&labelColor=%232ccce4&countColor=%23263759&style=flat-square" />
                 </a>
             </div>"""
         st.markdown(footer, unsafe_allow_html=True)
