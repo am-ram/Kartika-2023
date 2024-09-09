@@ -129,7 +129,9 @@ def main():
         st.divider()
 
         col1, col2 = st.columns(2)
-        st.progress(completion_percentage / 100)  # st.progress expects a value between 0 and 1
+        progress_value = min(completion_percentage / 100, 1.0)
+        # st.progress(completion_percentage / 100)  # st.progress expects a value between 0 and 1
+        st.progress(progress_value)
         st.header(f"Completion: {completion_percentage:.2f}%")
         with col1:
             st.header("Locations Covered")
