@@ -164,28 +164,45 @@ def main():
 
         col1, col2 = st.columns(2)
         with col1:
-        # timeline date vs lamps
-            vv_date_lamps = vv[['Date', 'Lamps']] ; vv_date_lamps['Date'] = pd.to_datetime(vv_date_lamps['Date'])
-            kv_date_lamps = kv[['Date', 'Lamps']] ; kv_date_lamps['Date'] = pd.to_datetime(kv_date_lamps['Date'])
-            vg_date_lamps = vg[['Date', 'Lamps']] ; vg_date_lamps['Date'] = pd.to_datetime(vg_date_lamps['Date'])
+            # timeline date vs lamps
+            vv_date_lamps = vv[['Date', 'Lamps']].copy()
+            vv_date_lamps.loc[:, 'Date'] = pd.to_datetime(vv_date_lamps['Date'], format='%d-%m-%y')
+        
+            kv_date_lamps = kv[['Date', 'Lamps']].copy()
+            kv_date_lamps.loc[:, 'Date'] = pd.to_datetime(kv_date_lamps['Date'], format='%d-%m-%y')
+        
+            vg_date_lamps = vg[['Date', 'Lamps']].copy()
+            vg_date_lamps.loc[:, 'Date'] = pd.to_datetime(vg_date_lamps['Date'], format='%d-%m-%y')
+        
+            # Combine dataframes
             combined_dates_lamps = pd.concat([vv_date_lamps, kv_date_lamps, vg_date_lamps], ignore_index=True)
-            combined_dates_lamps['Date'] = combined_dates_lamps['Date'].dt.strftime('%d-%m-%y')
-            combined_dates_lamps['Lamps'] = combined_dates_lamps.Lamps.astype('int')
+        
+            # Convert 'Date' column back to string format for consistency
+            combined_dates_lamps.loc[:, 'Date'] = combined_dates_lamps['Date'].dt.strftime('%d-%m-%y')
+            combined_dates_lamps.loc[:, 'Lamps'] = combined_dates_lamps['Lamps'].astype('int')
+        
+            # Group by 'Date' and sum the 'Lamps'
             overall_date_lamps = combined_dates_lamps.groupby('Date').sum().reset_index()
-            overall_date_lamps['Date'] = pd.to_datetime(overall_date_lamps['Date'])
+        
+            # Convert 'Date' back to datetime for sorting
+            overall_date_lamps.loc[:, 'Date'] = pd.to_datetime(overall_date_lamps['Date'], format='%d-%m-%y')
             overall_date_lamps = overall_date_lamps.sort_values(by='Date', ascending=True)
-            # print(overall_date_lamps,overall_date_lamps.dtypes)
+        
+            # Prepare x values for plotting
             xval = overall_date_lamps['Date'].dt.strftime('%d-%m-%Y')
-            print(xval.dtype)
+        
+            # Plot the timeline of lamps offered
             fig = px.line(overall_date_lamps, x=xval, y='Lamps', labels={'Lamps': 'Number of Lamps'}, title='Timeline of Lamps Offered')
             fig.update_traces(mode='markers+lines', marker=dict(size=10))  # Add markers (bubbles) on top
-            fig.update_xaxes(type='category', tickformat='%d-%m-%Y', tickangle=45,title_text='Date')
+            fig.update_xaxes(type='category', tickformat='%d-%m-%Y', tickangle=45, title_text='Date')
             fig.update_yaxes(tickfont=dict(size=16))
             fig.update_layout(
                 title=dict(text='Timeline of Lamps Offered', font=dict(size=24)),  # Increase title font size to 24
-                xaxis=dict(title=dict(font=dict(size=18))), yaxis=dict(title=dict(font=dict(size=18)))  # Adjust label font size
+                xaxis=dict(title=dict(font=dict(size=18))), 
+                yaxis=dict(title=dict(font=dict(size=18)))  # Adjust label font size
             )
             st.plotly_chart(fig)
+
             # vv_date_lamps = vv[['Date', 'Lamps']] ; vv_date_lamps['Date'] = pd.to_datetime(vv_date_lamps['Date'])
             # kv_date_lamps = kv[['Date', 'Lamps']] ; kv_date_lamps['Date'] = pd.to_datetime(kv_date_lamps['Date'])
             # vg_date_lamps = vg[['Date', 'Lamps']] ; vg_date_lamps['Date'] = pd.to_datetime(vg_date_lamps['Date'])
